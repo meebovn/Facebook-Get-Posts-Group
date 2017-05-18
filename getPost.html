@@ -17,9 +17,7 @@
 
   <body>
     <div class="row col-lg-8 col-lg-offset-4">
-      <h1>Link bài đăng Group MysTown Area 1</h1>
-      <p>Ngày lấy bài viết 05/05/2017 21:10 PM</p>
-      <!-- NOTE : Da leech den ngay  -->
+      <h1>Link bài đăng Group</h1>
     </div>
     <div class="row col-lg-12">
         <div class="panel panel-primary">
@@ -34,7 +32,6 @@
     <script>
       $(document).ready(function(){
           var accessT = "TOKEN CUA BAN"; // Gán token
-          //var urlGraph = 'https://graph.facebook.com/v2.3/1574765036149448/feed?limit=100&__paging_token=enc_AdByZAuNqnj7g9t5quNjra43SAVboJFyZCiZB1p9ljkeM9KcNVPoEmBt4g8unHjDmydCwjsZCOu5TVw9qkgQ6YBcPVOkd0b7gdJhZAKdZCiIQByzqnRgZDZD&icon_size=16&access_token=EAAAAUaZA8jlABADmBnF26kKZAuZAKQjKsGr8Nrfh7wryqe6TZAgaMkSTKkpJ5SGB46gR59fsm9Gw2Gwt1GQSH0ZCcdgaE9ZA5WZBjtRWCpLZC5NFkZAwBhLxoNGBNgMI3kzyeeGXfENzP3mQm1ZCrrnDcPsTfaLO4TTIU5ffjOlbA8OAZDZD&until=1478686909&get_param=value'; 
           var urlGraph = 'https://graph.facebook.com/v2.3/ID GROUP/feed?limit=100&access_token='+accessT; // Đường dẫn bài đăng trong nhóm
           var limitTime = "31536000000"; // Khoảng thời gian thống kê
           iniFunc(urlGraph,accessT,limitTime);
@@ -60,18 +57,13 @@
           console.log(objUsersIdPosts);
           var contentTable = "";
           for (var j = 0 ; j <= objUsersIdPosts[0].length - 1; j++) {
-            // console.log("ID : " + objUsersIdPosts[0][j] + " | FROM ID: " + objUsersIdPosts[1][j] + " | FROM NAME: " + objUsersIdPosts[2][j] + " | MESSASGE: " + objUsersIdPosts[3][j].substr(0, 40));
             if(typeof objUsersIdPosts[3][j] != "undefined" && objUsersIdPosts[3][j] != null){
               contentTable += "<tr><td>"+objUsersIdPosts[4][j]+"</td><td><a href='https://fb.com/"+objUsersIdPosts[0][j]+"'>"+objUsersIdPosts[0][j]+"</a></td><td><a href='"+objUsersIdPosts[1][j]+"'>"+objUsersIdPosts[2][j]+"</a></td><td>"+objUsersIdPosts[3][j].substr(0, 150)+"</td></tr>";
             }
           }
           $("#table").append(contentTable);
       }
-         
-       
-
-      
-
+              
       // Hàm loop dữ liệu paging truyền vào đối tượng
         function getObjs(dataLoad,obj,limitTime){
           if(typeof dataLoad.data !== "undefined" && dataLoad.data !== null){
@@ -90,6 +82,7 @@
           }   
           return obj;
         }
+
       // Hàm lấy dữ liệu thông qua api graph
         function getDataGraph(url){
           dataLoad = [];
