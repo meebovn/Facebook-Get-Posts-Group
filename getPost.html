@@ -1,0 +1,136 @@
+<html>
+  <head>
+    <meta charset="utf8" />
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+      <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <style>
+      a:visited {
+          color: black;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="row col-lg-8 col-lg-offset-4">
+      <h1>Link bài đăng Group MysTown Area 1</h1>
+      <p>Ngày lấy bài viết 05/05/2017 21:10 PM</p>
+      <!-- NOTE : Da leech den ngay  -->
+    </div>
+    <div class="row col-lg-12">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Link bài đăng</h3>
+          </div>
+          <table class="table table-condensed" id="table"> 
+          </table> 
+        </div>
+    </div>
+      <!-- Code thực thi -->
+    <script>
+      $(document).ready(function(){
+          var accessT = "TOKEN CUA BAN"; // Gán token
+          //var urlGraph = 'https://graph.facebook.com/v2.3/1574765036149448/feed?limit=100&__paging_token=enc_AdByZAuNqnj7g9t5quNjra43SAVboJFyZCiZB1p9ljkeM9KcNVPoEmBt4g8unHjDmydCwjsZCOu5TVw9qkgQ6YBcPVOkd0b7gdJhZAKdZCiIQByzqnRgZDZD&icon_size=16&access_token=EAAAAUaZA8jlABADmBnF26kKZAuZAKQjKsGr8Nrfh7wryqe6TZAgaMkSTKkpJ5SGB46gR59fsm9Gw2Gwt1GQSH0ZCcdgaE9ZA5WZBjtRWCpLZC5NFkZAwBhLxoNGBNgMI3kzyeeGXfENzP3mQm1ZCrrnDcPsTfaLO4TTIU5ffjOlbA8OAZDZD&until=1478686909&get_param=value'; 
+          var urlGraph = 'https://graph.facebook.com/v2.3/ID GROUP/feed?limit=100&access_token='+accessT; // Đường dẫn bài đăng trong nhóm
+          var limitTime = "31536000000"; // Khoảng thời gian thống kê
+          iniFunc(urlGraph,accessT,limitTime);
+
+      });
+
+      // Hàm khởi tạo
+      function iniFunc(url,accessT,limitTime){
+        // Đầu tiên lấy bài viết trong nhóm
+        dataLoad = getDataGraph(url);
+        console.log(dataLoad);
+
+       var obj = [[],[],[],[],[]];
+        var objUsersIdPosts = getObjs(dataLoad,obj,limitTime);
+        if(typeof dataLoad.data !== "undefined" && dataLoad.data !== null){
+          for (var i = 0 ; i <= dataLoad.data.length - 1; i++) {
+            if(formatDateTime(dataLoad.data[i].created_time) <= limitTime || formatDateTime(dataLoad.data[i].updated_time) <= limitTime){
+              dataLoad = getDataGraph(dataLoad.paging.next);
+              objUsersIdPosts = getObjs(dataLoad,objUsersIdPosts,limitTime);
+            };
+          }
+        }
+          console.log(objUsersIdPosts);
+          var contentTable = "";
+          for (var j = 0 ; j <= objUsersIdPosts[0].length - 1; j++) {
+            // console.log("ID : " + objUsersIdPosts[0][j] + " | FROM ID: " + objUsersIdPosts[1][j] + " | FROM NAME: " + objUsersIdPosts[2][j] + " | MESSASGE: " + objUsersIdPosts[3][j].substr(0, 40));
+            if(typeof objUsersIdPosts[3][j] != "undefined" && objUsersIdPosts[3][j] != null){
+              contentTable += "<tr><td>"+objUsersIdPosts[4][j]+"</td><td><a href='https://fb.com/"+objUsersIdPosts[0][j]+"'>"+objUsersIdPosts[0][j]+"</a></td><td><a href='"+objUsersIdPosts[1][j]+"'>"+objUsersIdPosts[2][j]+"</a></td><td>"+objUsersIdPosts[3][j].substr(0, 150)+"</td></tr>";
+            }
+          }
+          $("#table").append(contentTable);
+      }
+         
+       
+
+      
+
+      // Hàm loop dữ liệu paging truyền vào đối tượng
+        function getObjs(dataLoad,obj,limitTime){
+          if(typeof dataLoad.data !== "undefined" && dataLoad.data !== null){
+            for (var i = 0 ; i <= dataLoad.data.length - 1; i++) {
+              if(formatDateTime(dataLoad.data[i].created_time) <= limitTime || formatDateTime(dataLoad.data[i].updated_time) <= limitTime){// Giới hạn 1 tháng = 86400 giây
+                if(typeof dataLoad.data[i].from !== "undefined" && dataLoad.data[i].from !== null){
+                  console.log(formatDateTime(dataLoad.data[i].created_time) + " giây -> OK | " + dataLoad.data[i].from.name + " | " + dataLoad.data[i].from.id + " | " +  dataLoad.data[i].id + " | 3"); 
+                  obj[0].push(dataLoad.data[i].id);
+                  obj[1].push(dataLoad.data[i].from.id);                  
+                  obj[2].push(dataLoad.data[i].from.name);
+                  obj[3].push(dataLoad.data[i].message);
+                  obj[4].push(dataLoad.data[i].created_time);
+                }
+              }  
+            }
+          }   
+          return obj;
+        }
+      // Hàm lấy dữ liệu thông qua api graph
+        function getDataGraph(url){
+          dataLoad = [];
+          $.ajax({ 
+          // Get feed group facebook
+          type: 'GET', 
+          url:  url, 
+          data: { get_param: 'value' }, 
+          dataType: 'json',
+          async: false, 
+          success: function (data) {   
+            // khai báo biến data vào data global
+            dataLoad = data;
+            },
+          error: function (xhRequest, ErrorText, thrownError) {
+        }
+          });
+          return dataLoad;
+        }
+      // Hàm format date time api graph facebook
+        function formatDateTime(dateStr){
+            var year, month, day, hour, minute, dateUTC, date, ampm, d, time;
+            var iso = (dateStr.indexOf(' ')==-1&&dateStr.substr(4,1)=='-'&&dateStr.substr(7,1)=='-'&&dateStr.substr(10,1)=='T') ? true : false;
+         
+                year = dateStr.substr(0,4);
+                month = parseInt((dateStr.substr(5,1)=='0') ? dateStr.substr(6,1) : dateStr.substr(5,2))-1;
+                day = dateStr.substr(8,2);
+                hour = dateStr.substr(11,2);
+                minute = dateStr.substr(14,2);
+                dateUTC = Date.UTC(year, month, day, hour, minute);                 
+                date = new Date(dateUTC);
+                var curDate = new Date();
+         
+                var currentStamp = curDate.getTime();                   
+                var datesec = date.setUTCSeconds(0);
+                var difference = parseInt((currentStamp - datesec)/1000);
+                return difference;                              
+        }
+    </script>
+  </body>
+</html>
+
+
+
